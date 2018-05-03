@@ -1,0 +1,61 @@
+<table sortable-table (sorted)="onSorted($event)">
+  <tr>
+    <th sortable-column="id">ID</th>
+    <th sortable-column="name">Name</th>
+    <th sortable-column="author">Author</th>
+    <th sortable-column="published">Date of publication</th>
+    <th sortable-column="language">Language</th>
+    <th>&nbsp;</th>
+    <th>&nbsp;</th>
+  </tr>
+
+  <tr *ngFor="let book of books">
+    <td>
+      {{book.id}}
+    </td>
+    <td>
+      {{book.name}}
+    </td>
+    <td>
+      {{book.author}}
+    </td>
+    <td>
+      {{book.published}}
+    </td>
+    <td>
+      {{book.language}}
+    </td>
+    <td>
+      <button class="book-edit" (click)="editBookToggle(book)">Edit</button>
+    </td>
+    <td>
+      <button class="book-delete" (click)="deleteBook(book.id)">Delete</button>
+    </td>
+  </tr>
+</table>
+
+<div id="edit" *ngIf="editBookActive">
+  <input type="text" placeholder="book-name" value="{{editBook.name}}" #editName />
+  <input type="text" placeholder="book-author" value="{{editBook.author}}" #editAuthor />
+  <input type="tel" placeholder="book-published" value="{{editBook.published}}" #editPublished />
+  <input type="text" placeholder="book-language" value="{{editBook.language}}" #editLanguage />
+  <button (click)="editBookSubmit(editBook.id, editName.value, editAuthor.value, editPublished.value, editLanguage.value );
+    editName.value = '';
+    editAuthor.value = '';
+    editPublished.value = '';
+    editLanguage.value = '';
+">Submit</button>
+</div>
+<button (click)="addNewToggle()">{{ addNewToggleLabel }}</button>
+<div id="add-new" *ngIf="addNewActive">
+    <input type="text" placeholder="book-name" #bookName />
+    <input type="text" placeholder="book-author" #bookAuthor />
+    <input type="tel" placeholder="book-published" #bookPublished />
+    <input type="text" placeholder="book-language" #bookLanguage />
+    <button (click)="addNewSubmit(bookName.value, bookAuthor.value, bookPublished.value,bookLanguage.value );
+    bookName.value = '';
+    bookAuthor.value = '';
+    bookPublished.value = '';
+    bookLanguage.value = '';
+">Submit</button>
+</div>
