@@ -7,7 +7,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { MessageComponent } from './message/message.component';
-import { DummyComponent } from './dummy/dummy.component';
+import { MessageService } from './message/message.service';
+import { DummyService } from './dummy/dummy.service';
 import { SortableService } from './sortable/sortable.service';
 import { SortableTableDirective } from './sortable/sortable.directive';
 import { SortableColumnComponent } from './sortable/sortable.component';
@@ -18,7 +19,6 @@ import { SortableColumnComponent } from './sortable/sortable.component';
     LoginComponent,
     DashboardComponent,
     MessageComponent,
-    DummyComponent,
     SortableTableDirective,
     SortableColumnComponent
   ],
@@ -27,7 +27,7 @@ import { SortableColumnComponent } from './sortable/sortable.component';
     AppRoutingModule,
     FormsModule
   ],
-  providers: [SortableService],
+  providers: [MessageService, DummyService, SortableService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

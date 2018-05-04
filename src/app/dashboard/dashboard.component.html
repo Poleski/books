@@ -3,7 +3,7 @@
     <th sortable-column="id">ID</th>
     <th sortable-column="name">Name</th>
     <th sortable-column="author">Author</th>
-    <th sortable-column="published">Date of publication</th>
+    <th sortable-column="published">Year of publication</th>
     <th sortable-column="language">Language</th>
     <th>&nbsp;</th>
     <th>&nbsp;</th>
@@ -26,7 +26,7 @@
       {{book.language}}
     </td>
     <td>
-      <button class="book-edit" (click)="editBookToggle(book)">Edit</button>
+      <button class="book-edit" (click)="editBookToggle(book);">Edit</button>
     </td>
     <td>
       <button class="book-delete" (click)="deleteBook(book.id)">Delete</button>
@@ -34,28 +34,25 @@
   </tr>
 </table>
 
-<div id="edit" *ngIf="editBookActive">
-  <input type="text" placeholder="book-name" value="{{editBook.name}}" #editName />
-  <input type="text" placeholder="book-author" value="{{editBook.author}}" #editAuthor />
-  <input type="tel" placeholder="book-published" value="{{editBook.published}}" #editPublished />
-  <input type="text" placeholder="book-language" value="{{editBook.language}}" #editLanguage />
-  <button (click)="editBookSubmit(editBook.id, editName.value, editAuthor.value, editPublished.value, editLanguage.value );
-    editName.value = '';
-    editAuthor.value = '';
-    editPublished.value = '';
-    editLanguage.value = '';
-">Submit</button>
-</div>
+<form id="edit" *ngIf="editBookActive" #editForm="ngForm" (ngSubmit)="
+    editBookSubmit(editBook.id, editForm);
+">
+  <input type="text" placeholder="Name" name="book_edit_name" [(ngModel)]="editBook.name" #editName required="required"/>
+  <input type="text" placeholder="Author" name="book_edit_author" [(ngModel)]="editBook.author" #editAuthor required="required" />
+  <input type="tel" placeholder="Year of publication" name="book_edit_published" [(ngModel)]="editBook.published" #editPublished required="required" maxlength="4" pattern="[0-9]*" />
+  <input type="text" placeholder="Language" name="book_edit_language" [(ngModel)]="editBook.language" #editLanguage required="required" />
+  <input type="submit" value="submit" />
+</form>
 <button (click)="addNewToggle()">{{ addNewToggleLabel }}</button>
-<div id="add-new" *ngIf="addNewActive">
-    <input type="text" placeholder="book-name" #bookName />
-    <input type="text" placeholder="book-author" #bookAuthor />
-    <input type="tel" placeholder="book-published" #bookPublished />
-    <input type="text" placeholder="book-language" #bookLanguage />
-    <button (click)="addNewSubmit(bookName.value, bookAuthor.value, bookPublished.value,bookLanguage.value );
-    bookName.value = '';
-    bookAuthor.value = '';
-    bookPublished.value = '';
-    bookLanguage.value = '';
-">Submit</button>
-</div>
+<form id="add-new" *ngIf="addNewActive" #bookForm="ngForm" (ngSubmit)="addNewSubmit(bookForm);
+    bookForm.valid && bookName.value = '';
+    bookForm.valid && bookAuthor.value = '';
+    bookForm.valid && bookPublished.value = '';
+    bookForm.valid && bookLanguage.value = '';">
+    <input type="text" placeholder="Name" name="book_name" ngModel #bookName required="required" />
+    <input type="text" placeholder="Author" name="book_author" ngModel #bookAuthor required="required" />
+    <input type="tel" placeholder="Year of publication" name="book_published" ngModel #bookPublished required="required" maxlength="4" pattern="[0-9]*" />
+    <input type="text" placeholder="Language" name="book_language" ngModel #bookLanguage required="required" />
+    <input type="submit" value="submit" />
+</form>
+<button (click)="logout()">Logout</button>

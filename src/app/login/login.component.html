@@ -1,3 +1,11 @@
-<p>
-  login works!
-</p>
+<form #form="ngForm" (ngSubmit)="loginAttempt(form)">
+  <input type="text" id="books_login" name="books_login" placeholder="Login" required="required" ngModel />
+  <input type="password" id="books_password" name="books_password" placeholder="Password" required="required" ngModel />
+  <input type="submit" id="books_submit" value="Submit" />
+</form>
+<button (click)="registerToggle()">Register</button>
+<form *ngIf="registerActive" #regForm="ngForm" (ngSubmit)="registerAttempt(regForm); regLogin.value = ''; regPassword.value = ''">
+  <input type="text" id="books_reg_login" name="books_reg_login" placeholder="Login" required="required" ngModel #regLogin />
+  <input type="password" id="books_reg_password" name="books_reg_password" placeholder="Password" required="required" ngModel #regPassword />
+  <input type="submit" id="books_reg_submit" value="Submit" />
+</form>

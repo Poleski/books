@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Book} from '../book';
+import { Router } from '@angular/router';
+import { MessageService } from '../message/message.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,20 +12,22 @@ import { Book} from '../book';
 export class DashboardComponent implements OnInit {
 
   // Initial variables
-
   books = [];
   addNewActive = false;
   editBookActive = false;
   editBook = {};
   addNewToggleLabel = 'Add New';
-  currentUser = 1;
+  currentUser = sessionStorage.getItem("loggedIn");
+  currentSort = {};
 
   // Getting books for storage, assigning to local variables, sorting
 
-  getBooks(criteria: BookSearchCriteria): void {
+  getBooks(criteria: BookSearchCriteria): any {
     this.books = JSON.parse(localStorage.getItem('books' + this.currentUser));
 
-    return this.books.sort((a,b) => {
+    this.currentSort = criteria;
+
+    return this.books.sort((a, b) => {
       let x = a[criteria.sortColumn];
       let y = b[criteria.sortColumn];
 
@@ -31,9 +35,9 @@ export class DashboardComponent implements OnInit {
       y = typeof y === 'string' ? y.toUpperCase() : y;
 
       if (criteria.sortDirection === 'desc') {
-        return x < y;
+        return x < y ? 1 : -1;
       } else {
-        return x > y;
+        return x > y ? 1 : -1;
       }
     });
   }
@@ -51,10 +55,19 @@ export class DashboardComponent implements OnInit {
     this.addNewToggleLabel = 'Add New' ? 'Cancel' : 'Add New';
   }
 
-  addNewSubmit(name,author,published,language): void {
-    // TODO Walidacja
-    // TODO Czyszczenie pól
-    this.saveBook({ name, author, published, language } as Book);
+  addNewSubmit(form: any): void {
+    if (form.status === 'INVALID') {
+      this.messageService.add('Form filled in incorrectly!');
+    } else {
+        let name = form.value.book_name;
+        let author = form.value.book_author;
+        let published = parseInt(form.value.book_published);
+        let language = form.value.book_language;
+
+        this.saveBook({ name, author, published, language } as Book);
+        this.messageService.add('Book saved!');
+        this.getBooks(this.currentSort);
+    }
   }
 
   // Saving new book item
@@ -85,8 +98,9 @@ export class DashboardComponent implements OnInit {
   // Edit book trigger
 
   editBookToggle(book): void {
-      this.editBookActive = true;
       this.editBook = book;
+      this.editBookActive = true;
+      console.log(this.editBook);
   }
 
   // Delete book trigger
@@ -98,28 +112,47 @@ export class DashboardComponent implements OnInit {
 
       this.books.splice(index, 1);
       localStorage.setItem('books' + this.currentUser, JSON.stringify(this.books));
+      this.messageService.add('Book deleted!');
+      this.getBooks(this.currentSort);
   }
 
-  editBookSubmit(id,name,author,published,language): void {
+  editBookSubmit(id: number, form: any): void {
 
-      let index = this.books.findIndex(function (x) {
-          return x.id == id;
-      });
+      if (form.status === 'INVALID') {
+          this.messageService.add('Form filled in incorrectly!');
+      } else {
+          let index = this.books.findIndex(function (x) {
+              return x.id == id;
+          });
 
-      this.books[index].name = name;
-      this.books[index].author = author;
-      this.books[index].published = published;
-      this.books[index].language = language;
+          this.books[index].name = form.value.book_edit_name;
+          this.books[index].author = form.value.book_edit_author;
+          this.books[index].published = parseInt(form.value.book_edit_published);
+          this.books[index].language = form.value.book_edit_language;
 
-      localStorage.setItem('books' + this.currentUser, JSON.stringify(this.books));
-
-      this.editBookActive = false;
+          localStorage.setItem('books' + this.currentUser, JSON.stringify(this.books));
+          this.messageService.add('Book editted!');
+          this.editBookActive = false;
+          this.getBooks(this.currentSort);
+      }
   }
 
-  constructor() { }
+  logout(): void {
+      sessionStorage.removeItem('loggedIn');
+      this.messageService.add('Logged out successfully');
+      this.router.navigate(['/']);
+  }
+
+  constructor(private router: Router, private messageService: MessageService) {
+
+  }
 
   ngOnInit() {
-    this.getBooks({sortColumn: 'id', sortDirection:'asc'});
+      if(!sessionStorage.getItem("loggedIn")) {
+          this.router.navigate(['/']);
+      } else {
+          this.getBooks({sortColumn: 'published', sortDirection:'desc'});
+      }
   }
 }
 
