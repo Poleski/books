@@ -1,0 +1,258 @@
+// Colors
+
+@c-font: #333;
+@c-background: #ddd;
+@c-table: white;
+@c-focus: #eee;
+
+@c-cancel: #900;
+@c-confirm: #090;
+@c-neutral: #33c;
+
+// Media query
+
+@m-mobile-s: 480px;
+@m-mobile: 768px;
+@m-tablet: 1024px;
+@m-desktop: 1280px;
+
+@mobile-s: ~'only screen and (max-width: 479px)';
+@mobile: ~'only screen and (max-width: 767px)';
+@tablet: ~'only screen and (min-width: 768px)';
+@desktop: ~'only screen and (min-width: 1024px)';
+@desktop-l: ~'only screen and (min-width: 1280px)';
+
+// Mixins
+
+.m-button(@color) {
+  border: 2px solid @color;
+  text-align: center;
+  background-color: @color;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 200ms ease;
+  padding: 0.25em;
+  border-radius: 5px;
+  margin-bottom: 0.5em;
+
+  &:hover {
+    background-color: @c-background;
+    color: @color;
+  }
+
+  @media @tablet {
+    min-width: 80px;
+  }
+}
+
+// General
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  overflow-x: hidden;
+  font-family: Verdana, sans-serif;
+  color: @c-font;
+  background-color: @c-background;
+  font-size: 16px;
+  line-height: 1.2;
+  margin: 0;
+
+  @media @mobile {
+    font-size: 14px;
+  }
+
+  @media @mobile-s {
+    font-size: 12px;
+  }
+
+  #main {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 960px;
+    padding: 0.25em;
+    position: relative;
+  }
+
+  .container-center {
+    text-align: center;
+    margin: 0 auto;
+  }
+
+  h2,
+  h3 {
+    text-align: center;
+
+    @media @mobile {
+      text-align: left;
+    }
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+// Forms
+
+form {
+  &.login-form,
+  &.register-form {
+    max-width: 480px;
+    text-align: center;
+    margin: 0 auto;
+    width: 100%;
+
+    input {
+      text-align: center;
+      width: 100%;
+      max-width: 300px;
+      font-size: 1.25em;
+    }
+  }
+
+  input {
+    border: 1px solid @c-font;
+    border-radius: 5px;
+    padding: 0.25em 0.5em;
+    transition: all 200ms ease;
+    background-color: @c-table;
+    margin-bottom: 0.5em;
+    font-size: 1em;
+
+    &:focus,
+    &:hover {
+      background-color: @c-focus;
+    }
+
+    &.ng-touched {
+      &.ng-dirty {
+        &.ng-invalid {
+          border-color: @c-cancel;
+        }
+      }
+    }
+
+    &[type='submit'] {
+      .m-button(@c-confirm);
+    }
+  }
+}
+
+// Table
+
+table {
+  margin-bottom: 1em;
+  margin-left: -4px;
+  width: 100%;
+
+  colgroup {
+    #column-name {
+      width: 35%;
+    }
+
+    #column-edit,
+    #column-delete {
+      width: 5%;
+    }
+  }
+
+  th,
+  td {
+    background-color: @c-table;
+    border: 2px solid @c-background;
+    padding: 0.25em 0.5em;
+    border-radius: 5px;
+
+    &:first-child {
+      text-align: center;
+
+      @media @mobile {
+        display: none;
+      }
+    }
+
+    &:nth-child(2) {
+      font-weight: bold;
+    }
+
+    &:last-child,
+    &:nth-last-child(2) {
+      background-color: @c-background;
+      border: 0;
+      padding: 0.25em 0;
+    }
+  }
+
+  th {
+    cursor: pointer;
+    user-select: none;
+    font-weight: bold;
+    text-align: left;
+    background-color: @c-focus;
+
+    @media @mobile-s {
+      display: none;
+    }
+  }
+
+  td {
+    button {
+      &.btn-confirm,
+      &.btn-cancel {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+// Buttons
+
+button {
+  &.btn-confirm {
+    .m-button(@c-confirm);
+  }
+
+  &.btn-cancel {
+    .m-button(@c-cancel);
+  }
+
+  &.btn-neutral {
+    .m-button(@c-neutral);
+  }
+
+  &.btn-register {
+    margin: 0 auto 1em;
+    width: 100%;
+    max-width: 300px;
+    font-size: 1.25em;
+  }
+
+  &#logout {
+    .m-button(@c-cancel);
+    position: fixed;
+    top: 0.5em;
+    right: 0.5em;
+  }
+}
+
+// Messages
+
+.message-container {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  color: @c-cancel;
+  margin: 1em auto 0;
+  text-align: center;
+  height: 2em;
+
+  button {
+    margin-left: 1em;
+    margin-bottom: 0;
+    display: none   // Can be enabled if needed
+  }
+}

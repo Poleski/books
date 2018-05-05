@@ -7,31 +7,29 @@ import { DummyService } from '../dummy/dummy.service';
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit {
-  custom_users = '';
+  custom_users = [];
   users = [];
   registerActive = false;
   registerToggleLabel = 'Register';
 
   loginAttempt(form: any): void {
     if (form.status === 'INVALID') {
-      this.messageService.add('fields cannot be empty');
+      this.messageService.add('Fields cannot be empty');
     } else {
-        let userID = this.validateLogin(form.value.books_login, form.value.books_password);
+        const userID = this.validateLogin(form.value.books_login, form.value.books_password);
         if (userID) {
-          this.messageService.add('login successful');
           this.loginUser(userID);
         } else {
-          this.messageService.add('login and password don\'t match');
+          this.messageService.add('Login and password don\'t match');
         }
     }
   }
 
   validateLogin(login, password): any {
-    let match = <number>this.users.findIndex(function (x) {
+    const match = <number>this.users.findIndex(function (x) {
         return x.login === login && x.password === password;
     });
 
@@ -51,46 +49,42 @@ export class LoginComponent implements OnInit {
 
   registerAttempt(form: any): void {
     if (form.status === 'INVALID') {
-      this.messageService.add('fields cannot be empty');
+      this.messageService.add('Fields cannot be empty');
     } else {
-        let userID = this.validateRegister(form.value.books_reg_login);
-        console.log(userID);
+        const userID = this.validateRegister(form.value.books_reg_login);
+
         if (userID) {
-          this.messageService.add('Registration successful. You can log in now');
+          this.messageService.add('Registration successful! You can log in now.');
             this.registerUser(userID, form.value.books_reg_login, form.value.books_reg_password);
         } else {
-          this.messageService.add('User with that login already exists');
+          this.messageService.add('User with that login already exists.');
         }
     }
   }
 
   validateRegister(login): any {
-    let match = <number>this.users.findIndex(function (x) {
-        return x.login == login;
+    const match = <number>this.users.findIndex(function (x) {
+        return x.login === login;
     });
 
     return (match > -1) ? false : this.users.length + 1;
   }
 
   registerUser(id, login, password): void {
-    let newUser = new User();
+    const newUser = new User();
     newUser.id = id;
     newUser.login = login;
     newUser.password = password;
-
-    console.log(newUser);
 
     this.custom_users.push(newUser);
     this.users.push(newUser);
     localStorage.setItem('custom_users', JSON.stringify(this.custom_users));
   }
 
-  constructor(private router: Router, private dummyService: DummyService, private messageService: MessageService) {
-
-  }
+  constructor(private router: Router, private dummyService: DummyService, private messageService: MessageService) {}
 
   ngOnInit() {
-      if(sessionStorage.getItem('loggedIn')) {
+      if (sessionStorage.getItem('loggedIn')) {
           this.router.navigate(['/dashboard']);
       } else {
           this.dummyService.initCustomUsers();
@@ -98,5 +92,4 @@ export class LoginComponent implements OnInit {
           this.users = (this.custom_users.length === 0) ? USERS : [...USERS, ...this.custom_users];
       }
   }
-
 }
