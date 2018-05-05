@@ -9,8 +9,6 @@ import { MessageService } from '../message/message.service';
 })
 
 export class DashboardComponent implements OnInit {
-
-  // Initial variables
   books = [];
   addNewActive = false;
   editBookActive = false;
@@ -23,24 +21,35 @@ export class DashboardComponent implements OnInit {
   // Getting books for storage, assigning to local variables, sorting
 
   getBooks(criteria: BookSearchCriteria): any {
+
+    // Get latest book from storage
+
     this.books = JSON.parse(localStorage.getItem('books' + this.currentUser));
+
+    // Save current sorting criteria for other functions to use
 
     this.currentSort = criteria;
 
-    if (this.searchQuery.length > 0) {
-        this.books = this.books.filter((x) => {
-            const nameSearch = x.name.indexOf(this.searchQuery) > -1;
-            const authorSearch = x.author.indexOf(this.searchQuery) > -1;
-            const yearSearch = x.published.toString().indexOf(this.searchQuery) > -1;
-            const languageSearch = x.language.indexOf(this.searchQuery) > -1;
+    // If filter query present, filter book list name, author, pub date and language
 
-            return nameSearch || authorSearch || yearSearch || languageSearch;
-        });
+    if (this.searchQuery.length > 0) {
+      this.books = this.books.filter((x) => {
+        const nameSearch = x.name.indexOf(this.searchQuery) > -1;
+        const authorSearch = x.author.indexOf(this.searchQuery) > -1;
+        const yearSearch = x.published.toString().indexOf(this.searchQuery) > -1;
+        const languageSearch = x.language.indexOf(this.searchQuery) > -1;
+
+        return nameSearch || authorSearch || yearSearch || languageSearch;
+      });
     }
+
+    // Sort books
 
     return this.books.sort((a, b) => {
       let x = a[criteria.sortColumn];
       let y = b[criteria.sortColumn];
+
+      // Fix for incorrect string comparison
 
       x = typeof x === 'string' ? x.toUpperCase() : x;
       y = typeof y === 'string' ? y.toUpperCase() : y;
@@ -66,39 +75,39 @@ export class DashboardComponent implements OnInit {
     this.addNewToggleLabel = this.addNewToggleLabel === 'Add New' ? 'Cancel' : 'Add New';
   }
 
+  // Add New form data parsing and preparing to save new book
+
   addNewSubmit(form: any): void {
     if (form.status === 'INVALID') {
       this.messageService.add('Form filled in incorrectly!');
     } else {
-        const name = form.value.book_name;
-        const author = form.value.book_author;
-        const published = parseInt(form.value.book_published, 10);
-        const language = form.value.book_language;
+      const name = form.value.book_name;
+      const author = form.value.book_author;
+      const published = parseInt(form.value.book_published, 10);
+      const language = form.value.book_language;
 
-        this.saveBook({ name, author, published, language } as Book);
-        this.messageService.add('Book saved!');
-        this.getBooks(this.currentSort);
+      this.saveBook({ name, author, published, language } as Book);
+      this.messageService.add('Book saved!');
+      this.getBooks(this.currentSort);
     }
   }
 
-  // Saving new book item
+  // Saving new book
 
   saveBook(book): void {
     const newBook = book;
 
-    // Get ID of new book - will cause bug/feature if ID of deleted book gets reassigned, as other users will see new book instead of old.
+    // Get ID of new book
 
     let newId = 0;
     let i = 1;
     while (newId === 0) {
-        const index = this.books.findIndex(function (x) {
-            return x.id === i;
-        });
-        if (index === -1) {
-            newId = i;
-        } else {
-            i++;
-        }
+      const index = this.books.findIndex(x => x.id === i);
+      if (index === -1) {
+        newId = i;
+      } else {
+        i++;
+      }
     }
 
     newBook.id = newId;
@@ -109,65 +118,75 @@ export class DashboardComponent implements OnInit {
   // Edit book trigger
 
   editBookToggle(book): void {
-      this.editBook = book;
-      this.editBookActive = true;
+    this.editBook = book;
+    this.editBookActive = true;
   }
 
   // Delete book trigger
 
   deleteBook(id): void {
-      const index = this.books.findIndex(function (x) {
-          return x.id === id;
-      });
+    const index = this.books.findIndex(x => x.id === id);
 
-      this.books.splice(index, 1);
-      localStorage.setItem('books' + this.currentUser, JSON.stringify(this.books));
-      this.messageService.add('Book deleted!');
-      this.getBooks(this.currentSort);
+    this.books.splice(index, 1);
+    localStorage.setItem('books' + this.currentUser, JSON.stringify(this.books));
+    this.messageService.add('Book deleted!');
+    this.getBooks(this.currentSort);
   }
+
+  // Edit book form processing
 
   editBookSubmit(id: number, form: any): void {
+    if (form.status === 'INVALID') {
+      this.messageService.add('Form filled in incorrectly!');
+    } else {
+      const index = this.books.findIndex( x => x.id === id);
 
-      if (form.status === 'INVALID') {
-          this.messageService.add('Form filled in incorrectly!');
-      } else {
-          const index = this.books.findIndex(function (x) {
-              return x.id === id;
-          });
+      this.books[index].name = form.value.book_edit_name;
+      this.books[index].author = form.value.book_edit_author;
+      this.books[index].published = parseInt(form.value.book_edit_published, 10);
+      this.books[index].language = form.value.book_edit_language;
 
-          this.books[index].name = form.value.book_edit_name;
-          this.books[index].author = form.value.book_edit_author;
-          this.books[index].published = parseInt(form.value.book_edit_published, 10);
-          this.books[index].language = form.value.book_edit_language;
-
-          localStorage.setItem('books' + this.currentUser, JSON.stringify(this.books));
-          this.messageService.add('Book editted!');
-          this.editBookActive = false;
-          this.getBooks(this.currentSort);
-      }
+      localStorage.setItem('books' + this.currentUser, JSON.stringify(this.books));
+      this.messageService.add('Book editted!');
+      this.editBookActive = false;
+      this.getBooks(this.currentSort);
+    }
   }
+
+  // Filtering function
 
   bookFilter(form: any): void {
-      this.searchQuery = form.value.filter_text;
-      this.getBooks(this.currentSort);
+    this.searchQuery = form.value.filter_text;
+    this.getBooks(this.currentSort);
   }
 
+  // Clearing the filter
+
+  clearFilter(): void {
+    this.searchQuery = '';
+    this.getBooks(this.currentSort);
+  }
+
+  // Logout function
+
   logout(): void {
-      sessionStorage.removeItem('loggedIn');
-      this.messageService.add('Logged out successfully');
-      this.router.navigate(['/']);
+    sessionStorage.removeItem('loggedIn');
+    this.messageService.add('Logged out successfully');
+    this.router.navigate(['/']);
   }
 
   constructor(private router: Router, private messageService: MessageService) {
 
   }
 
+  // On initial run check if user is logged: If no, redirect to login, if yes, get book and sort by publish date, descending (according to specs)
+
   ngOnInit() {
-      if (!sessionStorage.getItem('loggedIn')) {
-          this.router.navigate(['/']);
-      } else {
-          this.getBooks({sortColumn: 'published', sortDirection: 'desc'});
-      }
+    if (!sessionStorage.getItem('loggedIn')) {
+      this.router.navigate(['/']);
+    } else {
+      this.getBooks({sortColumn: 'published', sortDirection: 'desc'});
+    }
   }
 }
 

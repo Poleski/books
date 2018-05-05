@@ -1,4 +1,5 @@
 <h2>Welcome to Book Management Tool</h2>
+
 <form class="login-form" #form="ngForm" (ngSubmit)="loginAttempt(form)">
   <input type="text" id="books_login" name="books_login" placeholder="Login" required="required" ngModel />
   <input type="password" id="books_password" name="books_password" placeholder="Password" required="required" ngModel />
@@ -6,10 +7,11 @@
 </form>
 
 <div class="container-center">
-  <button class="btn-neutral btn-register" (click)="registerToggle()">Registration</button>
+  <button class="btn-neutral btn-register" (click)="registerToggle()">{{ registerToggleLabel }}</button>
 </div>
 
 <h3 *ngIf="registerActive">Register new user using form below</h3>
+
 <form class="register-form" *ngIf="registerActive" #regForm="ngForm" (ngSubmit)="registerAttempt(regForm); regLogin.value = ''; regPassword.value = ''">
   <input type="text" id="books_reg_login" name="books_reg_login" placeholder="Login" required="required" ngModel #regLogin />
   <input type="password" id="books_reg_password" name="books_reg_password" placeholder="Password" required="required" ngModel #regPassword />

@@ -6,6 +6,8 @@ export class DummyService {
 
     constructor() { }
 
+    // If user doesn't have any books yet, provide him with dummy data
+
     initBooks(): void {
         let currentUser = sessionStorage.getItem("loggedIn");
 
@@ -16,8 +18,9 @@ export class DummyService {
         }
     }
 
+    // If no custom users have been created yet, save an empty array to storage
+
     initCustomUsers(): void {
-        console.log("dummy2");
         if (!localStorage.getItem('custom_users')) {
             localStorage.setItem('custom_users', JSON.stringify([]));
         }

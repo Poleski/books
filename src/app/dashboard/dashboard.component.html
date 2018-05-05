@@ -1,8 +1,11 @@
 <h2>Book Management Tool v0.1</h2>
 <form #filterForm="ngForm" id="filterForm" (ngSubmit)="bookFilter(filterForm)">
-  <input #filter type="text" name="filter_text" placeholder="filter" ngModel />
+  <input #filter type="text" name="filter_text" placeholder="Search query" ngModel />
   <input type="submit" value="Filter" />
 </form>
+
+<button (click)="clearFilter(); filter.value = ''" class="btn-cancel" *ngIf="searchQuery != ''">Clear</button>
+
 <table sortable-table (sorted)="onSorted($event)">
   <colgroup>
     <col id="column-id" />
@@ -22,7 +25,6 @@
     <th>&nbsp;</th>
     <th>&nbsp;</th>
   </tr>
-
   <tr *ngFor="let book of books">
     <td>
       {{book.id}}
@@ -48,16 +50,16 @@
   </tr>
 </table>
 
-<form id="edit" *ngIf="editBookActive" #editForm="ngForm" (ngSubmit)="
-    editBookSubmit(editBook.id, editForm);
-">
+<form id="edit" *ngIf="editBookActive" #editForm="ngForm" (ngSubmit)="editBookSubmit(editBook.id, editForm);">
   <input type="text" placeholder="Name" name="book_edit_name" [(ngModel)]="editBook.name" #editName required="required"/>
   <input type="text" placeholder="Author" name="book_edit_author" [(ngModel)]="editBook.author" #editAuthor required="required" />
   <input type="tel" placeholder="Year of publication" name="book_edit_published" [(ngModel)]="editBook.published" #editPublished required="required" maxlength="4" pattern="[0-9]*" />
   <input type="text" placeholder="Language" name="book_edit_language" [(ngModel)]="editBook.language" #editLanguage required="required" />
   <input type="submit" value="Submit" />
 </form>
+
 <button class="btn-neutral btn-add-new" (click)="addNewToggle()">{{ addNewToggleLabel }}</button>
+
 <form id="add-new" *ngIf="addNewActive" #bookForm="ngForm" (ngSubmit)="addNewSubmit(bookForm);
     bookForm.valid && bookName.value = '';
     bookForm.valid && bookAuthor.value = '';
@@ -67,6 +69,7 @@
     <input type="text" placeholder="Author" name="book_author" ngModel #bookAuthor required="required" />
     <input type="tel" placeholder="Year of publication" name="book_published" ngModel #bookPublished required="required" maxlength="4" pattern="[0-9]*" />
     <input type="text" placeholder="Language" name="book_language" ngModel #bookLanguage required="required" />
-    <input type="submit" value="submit" />
+    <input type="submit" value="Submit" />
 </form>
+
 <button id="logout" class="btn-cancel" (click)="logout()">Logout</button>

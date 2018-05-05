@@ -114,6 +114,10 @@ form {
     }
   }
 
+  &#filterForm {
+    display: inline-block;
+  }
+
   input {
     border: 1px solid @c-font;
     border-radius: 5px;
@@ -121,7 +125,7 @@ form {
     transition: all 200ms ease;
     background-color: @c-table;
     margin-bottom: 0.5em;
-    font-size: 1em;
+    vertical-align: middle;
 
     &:focus,
     &:hover {
@@ -134,6 +138,12 @@ form {
           border-color: @c-cancel;
         }
       }
+    }
+
+    &[type='text'],
+    &[type='tel'],
+    &[type='password'] {
+      font-size: 1em;
     }
 
     &[type='submit'] {
