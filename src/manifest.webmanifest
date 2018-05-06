@@ -1,0 +1,8 @@
+{
+  "name": "Book Management Tool",
+  "short_name": "Book Manager",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ddd",
+  "description": "A simply Angular 5 app created for LM."
+}
